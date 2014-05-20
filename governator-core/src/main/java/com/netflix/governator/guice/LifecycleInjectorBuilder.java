@@ -160,6 +160,26 @@ public interface LifecycleInjectorBuilder
      */
     public LifecycleInjectorBuilder withAdditionalModuleClasses(Class<?> ... modules);
     
+    /**
+     * Apply a suite of operations to the builder
+     * @param suite
+     * @return this
+     */
+    public LifecycleInjectorBuilder withSuite(LifecycleInjectorBuilderSuite suite);
+    
+    /**
+     * Apply a set of suites of operations to the builder
+     * @param suite
+     * @return this
+     */
+    public LifecycleInjectorBuilder withSuites(Iterable<? extends LifecycleInjectorBuilderSuite> suites);
+    
+    /**
+     * Apply a set of suites of operations to the builder
+     * @param suite
+     * @return this
+     */
+    public LifecycleInjectorBuilder withSuites(LifecycleInjectorBuilderSuite... suites);
     
     /**
      * Specify specific {@link AutoBindSingleton} classes that should NOT be bound in the main

@@ -281,7 +281,29 @@ class LifecycleInjectorBuilderImpl implements LifecycleInjectorBuilder
             .build();
         return this;
     }
-    
+
+    @Override
+    public LifecycleInjectorBuilder withSuite(LifecycleInjectorBuilderSuite suite) {
+        suite.configure(this);
+        return this;
+    }
+
+    @Override
+    public LifecycleInjectorBuilder withSuites(Iterable<? extends LifecycleInjectorBuilderSuite> suites) {
+        for (LifecycleInjectorBuilderSuite suite : suites) {
+            suite.configure(this);
+        }
+        return this;
+    }
+
+    @Override
+    public LifecycleInjectorBuilder withSuites(LifecycleInjectorBuilderSuite... suites) {
+        for (LifecycleInjectorBuilderSuite suite : suites) {
+            suite.configure(this);
+        }
+        return this;
+    }
+
     @Override
     public LifecycleInjector build()
     {
@@ -298,4 +320,5 @@ class LifecycleInjectorBuilderImpl implements LifecycleInjectorBuilder
     LifecycleInjectorBuilderImpl()
     {
     }
+
 }

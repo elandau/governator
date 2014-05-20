@@ -15,7 +15,9 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Stage;
+import com.netflix.governator.annotations.AutoBindSingleton;
 import com.netflix.governator.guice.actions.BindingReport;
+import com.netflix.governator.guice.lazy.LazySingleton;
 
 public class TestTransitiveNonLazySingletons {
     
@@ -28,10 +30,16 @@ public class TestTransitiveNonLazySingletons {
     }
     
     @Singleton
+    public static class ThisShouldBeTransitive {
+        
+    }
+    
+    @Singleton
     public static class ThisShouldBeLazy {
         public static final AtomicLong counter = new AtomicLong(0);
         
-        public ThisShouldBeLazy() {
+        @Inject
+        public ThisShouldBeLazy(ThisShouldBeTransitive transitive) {
             System.out.println("ThisShouldBeLazy");
             counter.incrementAndGet();
         }
@@ -44,6 +52,22 @@ public class TestTransitiveNonLazySingletons {
         @Inject
         public ThisShouldBeEager(Provider<ThisShouldBeLazy> provider) {
             System.out.println("ThisShouldBeEager");
+            counter.incrementAndGet();
+        }
+    }
+    
+    @LazySingleton
+    public static class AutoBindEagerDependency {
+        
+    }
+    
+    @AutoBindSingleton
+    public static class AutoBindEager {
+        public static final AtomicLong counter = new AtomicLong(0);
+        
+        @Inject
+        public AutoBindEager(Provider<AutoBindEagerDependency> provider) {
+            System.out.println("AutoBindEager");
             counter.incrementAndGet();
         }
     }
@@ -93,6 +117,7 @@ public class TestTransitiveNonLazySingletons {
     @Test
     public void testNoTransitiveSingletonCreation() {
         Injector injector = LifecycleInjector.builder()
+            .usingBasePackages("com.netflix.governator.guice")
             .inStage(Stage.DEVELOPMENT)
             .withMode(LifecycleInjectorMode.SIMULATED_CHILD_INJECTORS)
             .withModules(new AbstractModule() {
